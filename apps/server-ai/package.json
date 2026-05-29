@@ -1,0 +1,31 @@
+{
+  "name": "@org/server-ai",
+  "version": "0.0.1",
+  "private": true,
+  "nx": {
+    "targets": {
+      "serve": {
+        "continuous": true,
+        "executor": "@nx/js:node",
+        "defaultConfiguration": "development",
+        "dependsOn": ["build"],
+        "options": {
+          "buildTarget": "@org/server-ai:build",
+          "runBuildTargetDependencies": false
+        },
+        "configurations": {
+          "development": {
+            "buildTarget": "@org/server-ai:build:development"
+          },
+          "production": {
+            "buildTarget": "@org/server-ai:build:production"
+          }
+        }
+      }
+    }
+  },
+  "dependencies": {
+    "@google/genai": "^2.6.0",
+    "express": "^4.21.2"
+  }
+}

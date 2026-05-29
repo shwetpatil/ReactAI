@@ -41,6 +41,12 @@
     },
     {
       "path": "./libs/ai"
+    },
+    {
+      "path": ".//apps/server-ai-e2e"
+    },
+    {
+      "path": ".//apps/server-ai"
     }
   ]
 }

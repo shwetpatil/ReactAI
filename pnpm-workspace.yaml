@@ -5,6 +5,15 @@ packages:
   - 'libs/shop/*'
   - 'ai'
   - 'libs/*'
+  - '/apps/server-ai'
+  - '/apps/server-ai-e2e'
 allowBuilds:
   '@google/genai': false
+  '@parcel/watcher': false
+  '@swc/core': true
+  core-js-pure: false
+  esbuild: true
+  less: false
+  nx: true
   protobufjs: false
+  unrs-resolver: true

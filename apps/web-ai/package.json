@@ -2,6 +2,13 @@
   "name": "@org/web-ai",
   "version": "0.0.1",
   "private": true,
+  "nx": {
+    "projectType": "application",
+    "tags": ["scope:web-ai"]
+  },
+  "scripts": {
+    "dev": "pnpm --dir ../.. exec node ./tools/start-web-ai-with-server.cjs"
+  },
   "dependencies": {
     "@org/ai": "workspace:*"
   }

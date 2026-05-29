@@ -1,5 +1,4 @@
 import { useRef, useState } from 'react';
-import { askGeminiStream } from '@org/ai';
 
 type Message = {
   role: 'user' | 'assistant';
@@ -11,35 +10,21 @@ export function App() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  const abortRef = useRef(false);
-
-  const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+  const abortRef = useRef<AbortController | null>(null);
+  const serverUrl =
+    import.meta.env.VITE_SERVER_AI_URL ?? 'http://localhost:3333';
 
   async function askAI() {
     if (!prompt.trim()) {
       return;
     }
 
-    if (!apiKey) {
-      setMessages((prev) => [
-        ...prev,
-        {
-          role: 'assistant',
-          content:
-            'Missing VITE_GEMINI_API_KEY in apps/web-ai/.env.local',
-        },
-      ]);
-      return;
-    }
-
     const userPrompt = prompt;
-
     setPrompt('');
     setIsLoading(true);
 
-    abortRef.current = false;
+    abortRef.current = new AbortController();
 
-    // Add user message + empty assistant message
     setMessages((prev) => [
       ...prev,
       {
@@ -48,36 +33,36 @@ export function App() {
       },
       {
         role: 'assistant',
-        content: '',
+        content: 'Waiting for server response...',
       },
     ]);
 
     try {
-      let accumulated = '';
+      const response = await fetch(`${serverUrl}/api/ai`, {
+        method: 'POST',
+        signal: abortRef.current.signal,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ prompt: userPrompt }),
+      });
 
-      for await (const chunk of askGeminiStream(
-        userPrompt,
-        apiKey
-      )) {
-        if (abortRef.current) {
-          break;
-        }
+      const data = await response.json();
 
-        accumulated += chunk;
-
-        const currentContent = accumulated;
-
-        setMessages((prev) => {
-          const updated = [...prev];
-
-          updated[updated.length - 1] = {
-            role: 'assistant',
-            content: currentContent,
-          };
-
-          return updated;
-        });
+      if (!response.ok) {
+        throw new Error(data?.error || 'LLM request failed.');
       }
+
+      setMessages((prev) => {
+        const updated = [...prev];
+
+        updated[updated.length - 1] = {
+          role: 'assistant',
+          content: data.text ?? '',
+        };
+
+        return updated;
+      });
     } catch (error) {
       setMessages((prev) => {
         const updated = [...prev];
@@ -94,11 +79,12 @@ export function App() {
       });
     } finally {
       setIsLoading(false);
+      abortRef.current = null;
     }
   }
 
   function stopGeneration() {
-    abortRef.current = true;
+    abortRef.current?.abort();
     setIsLoading(false);
   }
 
@@ -115,7 +101,7 @@ export function App() {
         margin: '0 auto',
       }}
     >
-      <h1>Gemini Streaming Chat</h1>
+      <h1>Gemini AI Chat</h1>
 
       <textarea
         rows={6}
