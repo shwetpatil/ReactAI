@@ -1,0 +1,38 @@
+html,
+body,
+#root {
+    height: 100%;
+    margin: 0;
+}
+
+.app {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+header {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;      /* 10px */
+    background-color: aliceblue;
+    padding: 1rem;
+}
+
+ul {
+    display: flex;
+    gap: 0.625rem;      /* 10px */
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+main {
+    flex: 1;
+    padding: 1rem;
+}
+
+footer {
+    background-color: aliceblue;
+    padding: 1rem;
+}
