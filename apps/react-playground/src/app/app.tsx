@@ -1,10 +1,11 @@
 import styles from './app.module.css';
 
-import { Route, Routes, Link } from 'react-router-dom';
+import { Route, Routes, Link, Form } from 'react-router-dom';
 import { CounterPage } from './pages/CounterPage';
 import HomePage from './pages/HomePage';
 import { StarRatingPage } from './pages/StarRatingPage';
 import { TodoPage } from './pages/TodoPage';
+import { FormPage } from './pages/FormPage';
 
 export function App() {
   return (
@@ -28,6 +29,9 @@ export function App() {
             <li>
               <Link to="/todo">ToDo</Link>
             </li>
+            <li>
+              <Link to="/form">Form</Link>
+            </li>
           </ul>
         </nav>
 
@@ -37,6 +41,7 @@ export function App() {
             <Route path="/counter" element={<CounterPage />} />
             <Route path="/star-rating" element={<StarRatingPage />} />
             <Route path="/todo" element={<TodoPage />} />
+            <Route path="/form" element={<FormPage />} />
           </Routes>
         </div>
       </main>

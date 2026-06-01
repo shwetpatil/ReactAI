@@ -232,6 +232,10 @@ importers:
         specifier: ^4.21.2
         version: 4.22.2
 
+  apps/react-playground: {}
+
+  apps/react-playground-e2e: {}
+
   apps/server-ai:
     dependencies:
       '@google/genai':
