@@ -2,379 +2,336 @@ import { useState } from "react";
 import "./ResumeParser.css";
 
 export default function ResumeParser() {
-    const [formData, setFormData] = useState({
-        name: "",
-        age: "",
-        education: "",
-        phoneNumber: "",
-        email: "",
-        linkedin: "",
-        github: "",
-        summary: "",
-        skills: "",
-        experience: ""
-    });
+  const [file, setFile] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-    const [file, setFile] = useState(null);
-    const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phoneNumber: "",
+    linkedin: "",
+    github: "",
+    location: "",
+    currentDesignation: "",
+    totalExperience: "",
+    summary: "",
+    skills: [],
+    education: [],
+    experience: []
+  });
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
+  const handleFileChange = (e) => {
+    const selectedFile = e.target.files?.[0];
 
-        setFormData((prev) => ({
-            ...prev,
-            [name]: value
-        }));
-    };
+    if (selectedFile) {
+      setFile(selectedFile);
+    }
+  };
 
-    const handleFileChange = (e) => {
-        const selectedFile = e.target.files?.[0];
+  const handleParseResume = async (e) => {
+    e.preventDefault();
 
-        if (selectedFile) {
-            setFile(selectedFile);
+    if (!file) {
+      alert("Please select a resume file.");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const data = new FormData();
+      data.append("resume", file);
+
+      const response = await fetch(
+        "http://localhost:3333/api/resume/parse",
+        {
+          method: "POST",
+          body: data
         }
-    };
+      );
 
-    const handleParseSubmit = async (e) => {
-        e.preventDefault();
+      const result = await response.json();
 
-        if (!file) {
-            alert("Please select a resume file.");
-            return;
-        }
+      if (!result.success) {
+        throw new Error(result.error);
+      }
 
-        setLoading(true);
+      setFormData({
+        name: result.data.name ?? "",
+        email: result.data.email ?? "",
+        phoneNumber: result.data.phoneNumber ?? "",
+        linkedin: result.data.linkedin ?? "",
+        github: result.data.github ?? "",
+        location: result.data.location ?? "",
+        currentDesignation:
+          result.data.currentDesignation ?? "",
+        totalExperience:
+          result.data.totalExperience ?? "",
+        summary: result.data.summary ?? "",
+        skills: result.data.skills ?? [],
+        education: result.data.education ?? [],
+        experience: result.data.experience ?? []
+      });
+    } catch (error) {
+      console.error(error);
+      alert("Failed to parse resume");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-        try {
-            const formDataToSend = new FormData();
-            formDataToSend.append("resume", file);
+  return (
+    <div className="container">
+      <header>
+        <h1 className="title">
+          📄 AI Resume Parser
+        </h1>
 
-            const response = await fetch(
-                "http://localhost:3333/api/resume/parse",
-                {
-                    method: "POST",
-                    body: formDataToSend
-                }
-            );
+        <p className="subtitle">
+          Upload a resume and extract structured
+          candidate information using Gemini AI
+        </p>
+      </header>
 
-            if (!response.ok) {
-                throw new Error("Failed to parse resume");
-            }
+      <div className="card">
+        <form
+          className="upload-section"
+          onSubmit={handleParseResume}
+        >
+          <h2 className="section-title">
+            Upload Resume
+          </h2>
 
-            const result = await response.json();
+          <div className="dropzone">
+            <input
+              type="file"
+              id="resume-upload"
+              accept=".pdf,.doc,.docx"
+              onChange={handleFileChange}
+              disabled={loading}
+              className="file-input"
+            />
 
-            if (result.success && result.data) {
-                setFormData({
-                    name: result.data.name ?? "",
-                    age: result.data.age ?? "",
-                    education: result.data.education ?? "",
-                    phoneNumber: result.data.phoneNumber ?? "",
-                    email: result.data.email ?? "",
-                    linkedin: result.data.linkedin ?? "",
-                    github: result.data.github ?? "",
-                    summary: result.data.summary ?? "",
-                    skills: Array.isArray(result.data.skills)
-                        ? result.data.skills.join(", ")
-                        : result.data.skills ?? "",
-                    experience:
-                        typeof result.data.experience === "string"
-                            ? result.data.experience
-                            : JSON.stringify(
-                                  result.data.experience,
-                                  null,
-                                  2
-                              )
-                });
-            } else {
-                alert("Resume parsing failed.");
-            }
-        } catch (error) {
-            console.error(error);
-            alert("Error parsing resume.");
-        } finally {
-            setLoading(false);
-        }
-    };
+            <label
+              htmlFor="resume-upload"
+              className="file-label"
+            >
+              {file
+                ? "🔄 Change Resume"
+                : "📄 Select Resume"}
+            </label>
 
-    const handleSubmitForm = (e) => {
-        e.preventDefault();
+            {file && (
+              <p className="file-name">
+                Selected: {file.name}
+              </p>
+            )}
+          </div>
 
-        console.log("Final Resume Data:", formData);
-
-        alert("Profile saved successfully.");
-    };
-
-    return (
-        <div className="container">
-            <header className="header">
-                <h1 className="title">📄 AI Resume Parser</h1>
-
-                <p className="subtitle">
-                    Upload a resume and automatically extract candidate
-                    information
-                </p>
-            </header>
-
-            <div className="card">
-                <form
-                    className="upload-section"
-                    onSubmit={handleParseSubmit}
-                >
-                    <h2 className="section-title">
-                        Step 1: Upload Resume
-                    </h2>
-
-                    <div className="dropzone">
-                        <input
-                            type="file"
-                            id="resume-upload"
-                            accept=".pdf,.doc,.docx"
-                            onChange={handleFileChange}
-                            disabled={loading}
-                            className="file-input"
-                        />
-
-                        <label
-                            htmlFor="resume-upload"
-                            className="file-label"
-                        >
-                            {file
-                                ? "🔄 Change Resume"
-                                : "📂 Choose Resume"}
-                        </label>
-
-                        {file && (
-                            <p className="file-name">
-                                Selected File:
-                                <strong> {file.name}</strong>
-                            </p>
-                        )}
-                    </div>
-
-                    {loading && (
-                        <div className="loading-box">
-                            ⏳ Parsing Resume...
-                        </div>
-                    )}
-
-                    <button
-                        type="submit"
-                        className="primary-button"
-                        disabled={!file || loading}
-                    >
-                        {loading
-                            ? "Parsing..."
-                            : "Parse Resume"}
-                    </button>
-                </form>
+          {loading && (
+            <div className="loading-box">
+              ⏳ Parsing Resume...
             </div>
+          )}
 
-            <div className="card">
-                <form
-                    className="form-grid"
-                    onSubmit={handleSubmitForm}
-                >
-                    <div className="full-width">
-                        <h3 className="group-title">
-                            👤 Personal Information
-                        </h3>
-                    </div>
+          <button
+            type="submit"
+            className="primary-button"
+            disabled={!file || loading}
+          >
+            {loading
+              ? "Parsing..."
+              : "Parse Resume"}
+          </button>
+        </form>
+      </div>
 
-                    <div className="half-width">
-                        <label
-                            htmlFor="name"
-                            className="label"
-                        >
-                            Full Name
-                        </label>
+      <div className="card">
+        <h2 className="section-title">
+          Candidate Profile
+        </h2>
 
-                        <input
-                            id="name"
-                            name="name"
-                            className="input"
-                            value={formData.name}
-                            onChange={handleChange}
-                        />
-                    </div>
+        <div className="profile-grid">
+          <div>
+            <label>Name</label>
+            <input
+              value={formData.name}
+              readOnly
+            />
+          </div>
 
-                    <div className="half-width">
-                        <label
-                            htmlFor="age"
-                            className="label"
-                        >
-                            Age
-                        </label>
+          <div>
+            <label>Email</label>
+            <input
+              value={formData.email}
+              readOnly
+            />
+          </div>
 
-                        <input
-                            id="age"
-                            name="age"
-                            type="number"
-                            className="input"
-                            value={formData.age}
-                            onChange={handleChange}
-                        />
-                    </div>
+          <div>
+            <label>Phone Number</label>
+            <input
+              value={formData.phoneNumber}
+              readOnly
+            />
+          </div>
 
-                    <div className="full-width">
-                        <h3 className="group-title">
-                            📞 Contact Information
-                        </h3>
-                    </div>
+          <div>
+            <label>Location</label>
+            <input
+              value={formData.location}
+              readOnly
+            />
+          </div>
 
-                    <div className="half-width">
-                        <label
-                            htmlFor="email"
-                            className="label"
-                        >
-                            Email
-                        </label>
+          <div>
+            <label>
+              Current Designation
+            </label>
+            <input
+              value={
+                formData.currentDesignation
+              }
+              readOnly
+            />
+          </div>
 
-                        <input
-                            id="email"
-                            name="email"
-                            type="email"
-                            className="input"
-                            value={formData.email}
-                            onChange={handleChange}
-                        />
-                    </div>
+          <div>
+            <label>
+              Total Experience
+            </label>
+            <input
+              value={
+                formData.totalExperience
+              }
+              readOnly
+            />
+          </div>
 
-                    <div className="half-width">
-                        <label
-                            htmlFor="phoneNumber"
-                            className="label"
-                        >
-                            Phone Number
-                        </label>
+          <div>
+            <label>LinkedIn</label>
+            <input
+              value={formData.linkedin}
+              readOnly
+            />
+          </div>
 
-                        <input
-                            id="phoneNumber"
-                            name="phoneNumber"
-                            className="input"
-                            value={formData.phoneNumber}
-                            onChange={handleChange}
-                        />
-                    </div>
-
-                    <div className="half-width">
-                        <label
-                            htmlFor="linkedin"
-                            className="label"
-                        >
-                            LinkedIn
-                        </label>
-
-                        <input
-                            id="linkedin"
-                            name="linkedin"
-                            className="input"
-                            value={formData.linkedin}
-                            onChange={handleChange}
-                        />
-                    </div>
-
-                    <div className="half-width">
-                        <label
-                            htmlFor="github"
-                            className="label"
-                        >
-                            GitHub
-                        </label>
-
-                        <input
-                            id="github"
-                            name="github"
-                            className="input"
-                            value={formData.github}
-                            onChange={handleChange}
-                        />
-                    </div>
-
-                    <div className="full-width">
-                        <h3 className="group-title">
-                            💼 Professional Details
-                        </h3>
-                    </div>
-
-                    <div className="full-width">
-                        <label
-                            htmlFor="summary"
-                            className="label"
-                        >
-                            Summary
-                        </label>
-
-                        <textarea
-                            id="summary"
-                            name="summary"
-                            className="textarea"
-                            value={formData.summary}
-                            onChange={handleChange}
-                        />
-                    </div>
-
-                    <div className="full-width">
-                        <label
-                            htmlFor="education"
-                            className="label"
-                        >
-                            Education
-                        </label>
-
-                        <textarea
-                            id="education"
-                            name="education"
-                            className="textarea"
-                            value={formData.education}
-                            onChange={handleChange}
-                        />
-                    </div>
-
-                    <div className="full-width">
-                        <label
-                            htmlFor="skills"
-                            className="label"
-                        >
-                            Skills
-                        </label>
-
-                        <input
-                            id="skills"
-                            name="skills"
-                            className="input"
-                            value={formData.skills}
-                            onChange={handleChange}
-                        />
-                    </div>
-
-                    <div className="full-width">
-                        <label
-                            htmlFor="experience"
-                            className="label"
-                        >
-                            Experience
-                        </label>
-
-                        <textarea
-                            id="experience"
-                            name="experience"
-                            rows="6"
-                            className="textarea"
-                            value={formData.experience}
-                            onChange={handleChange}
-                        />
-                    </div>
-
-                    <div className="full-width">
-                        <button
-                            type="submit"
-                            className="save-button"
-                        >
-                            Save Profile
-                        </button>
-                    </div>
-                </form>
-            </div>
+          <div>
+            <label>GitHub</label>
+            <input
+              value={formData.github}
+              readOnly
+            />
+          </div>
         </div>
-    );
+
+        <div className="section">
+          <h3>
+            Professional Summary
+          </h3>
+
+          <textarea
+            rows={5}
+            value={formData.summary}
+            readOnly
+          />
+        </div>
+
+        <div className="section">
+          <h3>Skills</h3>
+
+          <div className="skills-container">
+            {formData.skills.length > 0 ? (
+              formData.skills.map(
+                (skill, index) => (
+                  <span
+                    key={index}
+                    className="skill-chip"
+                  >
+                    {skill}
+                  </span>
+                )
+              )
+            ) : (
+              <p>
+                No skills extracted.
+              </p>
+            )}
+          </div>
+        </div>
+
+        <div className="section">
+          <h3>Education</h3>
+
+          {formData.education.length >
+          0 ? (
+            formData.education.map(
+              (edu, index) => (
+                <div
+                  key={index}
+                  className="card-item"
+                >
+                  <strong>
+                    {edu.degree}
+                  </strong>
+
+                  <p>
+                    {
+                      edu.institution
+                    }
+                  </p>
+
+                  <p>{edu.year}</p>
+                </div>
+              )
+            )
+          ) : (
+            <p>
+              No education found.
+            </p>
+          )}
+        </div>
+
+        <div className="section">
+          <h3>Experience</h3>
+
+          {formData.experience.length >
+          0 ? (
+            formData.experience.map(
+              (job, index) => (
+                <div
+                  key={index}
+                  className="card-item"
+                >
+                  <h4>{job.role}</h4>
+
+                  <p>
+                    {job.company}
+                  </p>
+
+                  <p>
+                    {
+                      job.startDate
+                    }{" "}
+                    -{" "}
+                    {job.endDate}
+                  </p>
+
+                  <p>
+                    {
+                      job.description
+                    }
+                  </p>
+                </div>
+              )
+            )
+          ) : (
+            <p>
+              No experience found.
+            </p>
+          )}
+        </div>
+      </div>
+    </div>
+  );
 }

@@ -27,34 +27,25 @@ const ai = new GoogleGenAI({
   apiKey: GEMINI_API_KEY,
 });
 
-app.use(
-  (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): void => {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header(
-      'Access-Control-Allow-Headers',
-      'Origin, X-Requested-With, Content-Type, Accept'
-    );
-    res.header('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
+app.use((req: Request, res: Response, next: NextFunction): void => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header(
+    'Access-Control-Allow-Headers',
+    'Origin, X-Requested-With, Content-Type, Accept',
+  );
+  res.header('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
 
-    if (req.method === 'OPTIONS') {
-      res.sendStatus(204);
-      return;
-    }
-
-    next();
+  if (req.method === 'OPTIONS') {
+    res.sendStatus(204);
+    return;
   }
-);
+
+  next();
+});
 
 app.use(express.json());
 
-app.use(
-  '/assets',
-  express.static(path.join(__dirname, 'assets'))
-);
+app.use('/assets', express.static(path.join(__dirname, 'assets')));
 
 app.get('/api', (_req, res) => {
   res.json({
@@ -66,71 +57,182 @@ app.get('/api', (_req, res) => {
  * PARSE RESUME ENDPOINT
  * Extracts full profile information matching frontend fields.
  */
-app.post('/api/resume/parse', upload.single('resume'), async (req: Request, res: Response) => {
-  console.log('Received resume parsing request');
-  try {
-    const file = req.file;
+app.post(
+  '/api/resume/parse',
+  upload.single('resume'),
+  async (req: Request, res: Response) => {
+    try {
+      const file = req.file;
 
-    if (!file) {
-      return res.status(400).json({ error: 'No resume file uploaded.' });
-    }
+      if (!file) {
+        return res.status(400).json({
+          success: false,
+          error: 'No resume uploaded',
+        });
+      }
 
-    // Convert file buffer to Gemini's inlineData inline payload structure
-    const resumePart = {
-      inlineData: {
-        data: file.buffer.toString('base64'),
-        mimeType: file.mimetype,
-      },
-    };
-
-    // Explicit system instructions for rich document parsing
-    const prompt = 'Extract candidate information from the attached resume document accurately into the requested schema template.';
-
-    // Execute Gemini call requesting the expanded structural layout
-    const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
-      contents: [resumePart, prompt],
-      config: {
-        responseMimeType: 'application/json',
-        responseSchema: {
-          type: Type.OBJECT,
-          properties: {
-            name: { type: Type.STRING, description: 'Full name of the candidate.' },
-            age: { type: Type.STRING, description: 'Age if mentioned, else empty string.' },
-            phoneNumber: { type: Type.STRING, description: 'Primary contact number.' },
-            email: { type: Type.STRING, description: 'Primary email address.' },
-            linkedin: { type: Type.STRING, description: 'LinkedIn profile link if found, else empty.' },
-            github: { type: Type.STRING, description: 'GitHub profile link if found, else empty.' },
-            summary: { type: Type.STRING, description: 'Short professional profile summary bio.' },
-            education: { type: Type.STRING, description: 'Educational institutions, degrees earned, and duration metrics.' },
-            skills: { type: Type.STRING, description: 'Comma separated list summarizing relevant technological or tool skills.' },
-            experience: { type: Type.STRING, description: 'Complete job timeline tracking roles, company locations, and descriptions.' },
-          },
-          required: ['name', 'email', 'phoneNumber', 'education', 'skills', 'experience'],
+      const resumePart = {
+        inlineData: {
+          data: file.buffer.toString('base64'),
+          mimeType: file.mimetype,
         },
-      },
-    });
+      };
 
-    console.log(
-      'Gemini Resume Parsing Response:',
-      JSON.stringify(response, null, 2)
-    );
+      const prompt = `
+You are an expert resume parser.
 
-    // Extract parsing results safely
-    const responseText = response.text ?? '{}';
-    const extractedData = JSON.parse(responseText);
+Analyze the attached resume and extract information.
 
-    return res.json({
-      success: true,
-      data: extractedData,
-    });
-  } catch (error) {
-    console.error('Parsing Error:', error);
-    return res.status(500).json({
-      error: error instanceof Error ? error.message : 'Unknown server error during parsing',
-    });
-  }
-});
+Rules:
+- Return ONLY the schema fields.
+- If information is missing, return empty string or empty array.
+- Preserve company names exactly.
+- Preserve job titles exactly.
+- Extract all education entries.
+- Extract all work experiences.
+- Extract all skills.
+- Do not hallucinate missing information.
+`;
+
+      const response = await ai.models.generateContent({
+        model: 'gemini-2.0-flash',
+
+        contents: [resumePart, prompt],
+
+        config: {
+          responseMimeType: 'application/json',
+
+          responseSchema: {
+            type: Type.OBJECT,
+
+            properties: {
+              name: {
+                type: Type.STRING,
+              },
+
+              email: {
+                type: Type.STRING,
+              },
+
+              phoneNumber: {
+                type: Type.STRING,
+              },
+
+              linkedin: {
+                type: Type.STRING,
+              },
+
+              github: {
+                type: Type.STRING,
+              },
+
+              location: {
+                type: Type.STRING,
+              },
+
+              currentDesignation: {
+                type: Type.STRING,
+              },
+
+              totalExperience: {
+                type: Type.STRING,
+              },
+
+              summary: {
+                type: Type.STRING,
+              },
+
+              skills: {
+                type: Type.ARRAY,
+                items: {
+                  type: Type.STRING,
+                },
+              },
+
+              education: {
+                type: Type.ARRAY,
+                items: {
+                  type: Type.OBJECT,
+                  properties: {
+                    institution: {
+                      type: Type.STRING,
+                    },
+                    degree: {
+                      type: Type.STRING,
+                    },
+                    year: {
+                      type: Type.STRING,
+                    },
+                  },
+                },
+              },
+
+              experience: {
+                type: Type.ARRAY,
+                items: {
+                  type: Type.OBJECT,
+                  properties: {
+                    company: {
+                      type: Type.STRING,
+                    },
+                    role: {
+                      type: Type.STRING,
+                    },
+                    startDate: {
+                      type: Type.STRING,
+                    },
+                    endDate: {
+                      type: Type.STRING,
+                    },
+                    description: {
+                      type: Type.STRING,
+                    },
+                  },
+                },
+              },
+            },
+
+            required: [
+              'name',
+              'email',
+              'phoneNumber',
+              'skills',
+              'education',
+              'experience',
+            ],
+          },
+        },
+      });
+
+      const responseText = response.text ?? '{}';
+
+      let parsedData = {};
+
+      try {
+        parsedData = JSON.parse(responseText);
+      } catch (jsonError) {
+        console.error('JSON Parse Error', jsonError);
+
+        return res.status(500).json({
+          success: false,
+          error: 'Gemini returned invalid JSON',
+        });
+      }
+
+      return res.json({
+        success: true,
+        data: parsedData,
+      });
+    } catch (error) {
+      console.error('Resume Parse Error', error);
+
+      return res.status(500).json({
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error',
+      });
+    }
+  },
+);
 
 app.post('/api/ai', async (req, res) => {
   try {
@@ -147,10 +249,7 @@ app.post('/api/ai', async (req, res) => {
       contents: prompt,
     });
 
-    console.log(
-      'Gemini Response:',
-      JSON.stringify(response, null, 2)
-    );
+    console.log('Gemini Response:', JSON.stringify(response, null, 2));
 
     return res.json({
       text: response.text ?? '',

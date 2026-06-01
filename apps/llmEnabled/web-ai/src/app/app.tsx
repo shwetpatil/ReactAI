@@ -7,21 +7,21 @@ import ResumeParser from './pages/ResumeParser';
 export function App() {
   return (
     <div className={styles.app}>
-      <header>
-        <h1>LLM Playground</h1>
+      <header className={styles.header}>
+        <h1>🤖 AI Playground</h1>
       </header>
 
-      <main>
-        <nav>
-          <ul>
+      <main className={styles.main}>
+        <nav className={styles.nav}>
+          <ul className={styles.navList}>
             <li>
-              <Link to="/">Home</Link>
+              <Link to="/Copilot">💬 Copilot</Link>
             </li>
+
             <li>
-              <Link to="/Copilot">Copilot</Link>
-            </li>
-             <li>
-              <Link to="/ResumeParser">ResumeParser</Link>
+              <Link to="/ResumeParser">
+                📄 Resume Parser
+              </Link>
             </li>
           </ul>
         </nav>
@@ -30,12 +30,16 @@ export function App() {
           <Routes>
             <Route path="/" element={<CopilotPage />} />
             <Route path="/Copilot" element={<CopilotPage />} />
-            <Route path="/ResumeParser" element={<ResumeParser />} />
+            <Route
+              path="/ResumeParser"
+              element={<ResumeParser />}
+            />
           </Routes>
         </div>
       </main>
-      <footer>
-        <p>&copy; 2026 React Playground</p>
+
+      <footer className={styles.footer}>
+        <p>© 2026 AI Playground</p>
       </footer>
     </div>
   );
