@@ -1,24 +1,26 @@
-import { useState } from 'react';
+import { useState } from "react";
+import "./ResumeParser.css";
 
 export default function ResumeParser() {
     const [formData, setFormData] = useState({
-        name: '',
-        age: '',
-        education: '',
-        phoneNumber: '',
-        email: '',
-        linkedin: '',
-        github: '',
-        summary: '',
-        skills: '',
-        experience: ''
+        name: "",
+        age: "",
+        education: "",
+        phoneNumber: "",
+        email: "",
+        linkedin: "",
+        github: "",
+        summary: "",
+        skills: "",
+        experience: ""
     });
-    
+
     const [file, setFile] = useState(null);
     const [loading, setLoading] = useState(false);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
+
         setFormData((prev) => ({
             ...prev,
             [name]: value
@@ -26,51 +28,69 @@ export default function ResumeParser() {
     };
 
     const handleFileChange = (e) => {
-        if (e.target.files && e.target.files.length > 0) {
-            setFile(e.target.files[0]);
+        const selectedFile = e.target.files?.[0];
+
+        if (selectedFile) {
+            setFile(selectedFile);
         }
     };
 
     const handleParseSubmit = async (e) => {
-        e.preventDefault(); 
-        if (!file) return;
+        e.preventDefault();
+
+        if (!file) {
+            alert("Please select a resume file.");
+            return;
+        }
 
         setLoading(true);
-        const dataToSend = new FormData();
-        dataToSend.append('resume', file);
 
         try {
-            const response = await fetch('http://localhost:3333/api/resume/parse', {
-                method: 'POST',
-                body: dataToSend,
-            });
+            const formDataToSend = new FormData();
+            formDataToSend.append("resume", file);
+
+            const response = await fetch(
+                "http://localhost:3333/api/resume/parse",
+                {
+                    method: "POST",
+                    body: formDataToSend
+                }
+            );
 
             if (!response.ok) {
-                throw new Error(`Server error: ${response.statusText}`);
+                throw new Error("Failed to parse resume");
             }
 
             const result = await response.json();
-            console.log('Parsing Result:', result);
 
             if (result.success && result.data) {
                 setFormData({
-                    name: result.data.name ?? '',
-                    age: result.data.age ?? '',
-                    education: result.data.education ?? '',
-                    phoneNumber: result.data.phoneNumber ?? '',
-                    email: result.data.email ?? '',
-                    linkedin: result.data.linkedin ?? '',
-                    github: result.data.github ?? '',
-                    summary: result.data.summary ?? '',
-                    skills: result.data.skills ?? '',
-                    experience: result.data.experience ?? ''
+                    name: result.data.name ?? "",
+                    age: result.data.age ?? "",
+                    education: result.data.education ?? "",
+                    phoneNumber: result.data.phoneNumber ?? "",
+                    email: result.data.email ?? "",
+                    linkedin: result.data.linkedin ?? "",
+                    github: result.data.github ?? "",
+                    summary: result.data.summary ?? "",
+                    skills: Array.isArray(result.data.skills)
+                        ? result.data.skills.join(", ")
+                        : result.data.skills ?? "",
+                    experience:
+                        typeof result.data.experience === "string"
+                            ? result.data.experience
+                            : JSON.stringify(
+                                  result.data.experience,
+                                  null,
+                                  2
+                              )
                 });
             } else {
-                alert('Failed to parse resume data.');
+                alert("Resume parsing failed.");
             }
         } catch (error) {
-            console.error('Error uploading file:', error);
-            alert('An error occurred while parsing the resume.');
+            console.error(error);
+            alert("Error parsing resume.");
         } finally {
             setLoading(false);
         }
@@ -78,86 +98,283 @@ export default function ResumeParser() {
 
     const handleSubmitForm = (e) => {
         e.preventDefault();
-        console.log('Final Data Ready to Save:', formData);
-        alert('Data saved successfully!');
+
+        console.log("Final Resume Data:", formData);
+
+        alert("Profile saved successfully.");
     };
 
     return (
-        <div style={{ maxWidth: '600px', margin: '0 auto', padding: '20px' }}>
-            <h1>Resume Parser</h1>
-            
-            <form onSubmit={handleParseSubmit}>
-                <h2>Step 1: Attach Resume</h2>
-                <input 
-                    type="file" 
-                    accept=".pdf,.doc,.docx" 
-                    onChange={handleFileChange} 
-                    disabled={loading}
-                />
-                {file && <p>Selected file: {file.name}</p>}
-                {loading && <p style={{ color: 'blue' }}>Parsing file with Gemini AI...</p>}
-                <button type="submit" disabled={!file || loading}>Parse Resume</button>
-            </form>
+        <div className="container">
+            <header className="header">
+                <h1 className="title">📄 AI Resume Parser</h1>
 
-            <hr style={{ margin: '20px 0' }} />
+                <p className="subtitle">
+                    Upload a resume and automatically extract candidate
+                    information
+                </p>
+            </header>
 
-            <h2>Step 2: Review & Complete Info</h2>
-            <form onSubmit={handleSubmitForm}>
-                <h3>Personal Information</h3>
-                <div>
-                    <label htmlFor="name">Name</label>
-                    <input type="text" id="name" name="name" value={formData.name} onChange={handleChange} />
-                </div>
+            <div className="card">
+                <form
+                    className="upload-section"
+                    onSubmit={handleParseSubmit}
+                >
+                    <h2 className="section-title">
+                        Step 1: Upload Resume
+                    </h2>
 
-                <div>
-                    <label htmlFor="age">Age</label>
-                    <input type="number" id="age" name="age" value={formData.age} onChange={handleChange} />
-                </div>
+                    <div className="dropzone">
+                        <input
+                            type="file"
+                            id="resume-upload"
+                            accept=".pdf,.doc,.docx"
+                            onChange={handleFileChange}
+                            disabled={loading}
+                            className="file-input"
+                        />
 
-                <h3>Contact & Links</h3>
-                <div>
-                    <label htmlFor="email">Email</label>
-                    <input type="email" id="email" name="email" value={formData.email} onChange={handleChange} />
-                </div>
+                        <label
+                            htmlFor="resume-upload"
+                            className="file-label"
+                        >
+                            {file
+                                ? "🔄 Change Resume"
+                                : "📂 Choose Resume"}
+                        </label>
 
-                <div>
-                    <label htmlFor="phoneNumber">Phone Number</label>
-                    <input type="tel" id="phoneNumber" name="phoneNumber" value={formData.phoneNumber} onChange={handleChange} />
-                </div>
+                        {file && (
+                            <p className="file-name">
+                                Selected File:
+                                <strong> {file.name}</strong>
+                            </p>
+                        )}
+                    </div>
 
-                <div>
-                    <label htmlFor="linkedin">LinkedIn URL</label>
-                    <input type="url" id="linkedin" name="linkedin" value={formData.linkedin} onChange={handleChange} />
-                </div>
+                    {loading && (
+                        <div className="loading-box">
+                            ⏳ Parsing Resume...
+                        </div>
+                    )}
 
-                <div>
-                    <label htmlFor="github">GitHub URL</label>
-                    <input type="url" id="github" name="github" value={formData.github} onChange={handleChange} />
-                </div>
+                    <button
+                        type="submit"
+                        className="primary-button"
+                        disabled={!file || loading}
+                    >
+                        {loading
+                            ? "Parsing..."
+                            : "Parse Resume"}
+                    </button>
+                </form>
+            </div>
 
-                <h3>Professional Details</h3>
-                <div>
-                    <label htmlFor="summary">Professional Summary</label>
-                    <textarea id="summary" name="summary" rows={3} value={formData.summary} onChange={handleChange} style={{ width: '100%' }} />
-                </div>
+            <div className="card">
+                <form
+                    className="form-grid"
+                    onSubmit={handleSubmitForm}
+                >
+                    <div className="full-width">
+                        <h3 className="group-title">
+                            👤 Personal Information
+                        </h3>
+                    </div>
 
-                <div>
-                    <label htmlFor="education">Education</label>
-                    <textarea id="education" name="education" rows={2} value={formData.education} onChange={handleChange} style={{ width: '100%' }} />
-                </div>
+                    <div className="half-width">
+                        <label
+                            htmlFor="name"
+                            className="label"
+                        >
+                            Full Name
+                        </label>
 
-                <div>
-                    <label htmlFor="skills">Skills (Comma separated)</label>
-                    <input type="text" id="skills" name="skills" placeholder="React, Node.js, TypeScript" value={formData.skills} onChange={handleChange} />
-                </div>
+                        <input
+                            id="name"
+                            name="name"
+                            className="input"
+                            value={formData.name}
+                            onChange={handleChange}
+                        />
+                    </div>
 
-                <div>
-                    <label htmlFor="experience">Work Experience</label>
-                    <textarea id="experience" name="experience" rows={4} value={formData.experience} onChange={handleChange} style={{ width: '100%' }} />
-                </div>
-                
-                <button type="submit" disabled={loading} style={{ marginTop: '20px' }}>Submit Final Profile</button>
-            </form>
+                    <div className="half-width">
+                        <label
+                            htmlFor="age"
+                            className="label"
+                        >
+                            Age
+                        </label>
+
+                        <input
+                            id="age"
+                            name="age"
+                            type="number"
+                            className="input"
+                            value={formData.age}
+                            onChange={handleChange}
+                        />
+                    </div>
+
+                    <div className="full-width">
+                        <h3 className="group-title">
+                            📞 Contact Information
+                        </h3>
+                    </div>
+
+                    <div className="half-width">
+                        <label
+                            htmlFor="email"
+                            className="label"
+                        >
+                            Email
+                        </label>
+
+                        <input
+                            id="email"
+                            name="email"
+                            type="email"
+                            className="input"
+                            value={formData.email}
+                            onChange={handleChange}
+                        />
+                    </div>
+
+                    <div className="half-width">
+                        <label
+                            htmlFor="phoneNumber"
+                            className="label"
+                        >
+                            Phone Number
+                        </label>
+
+                        <input
+                            id="phoneNumber"
+                            name="phoneNumber"
+                            className="input"
+                            value={formData.phoneNumber}
+                            onChange={handleChange}
+                        />
+                    </div>
+
+                    <div className="half-width">
+                        <label
+                            htmlFor="linkedin"
+                            className="label"
+                        >
+                            LinkedIn
+                        </label>
+
+                        <input
+                            id="linkedin"
+                            name="linkedin"
+                            className="input"
+                            value={formData.linkedin}
+                            onChange={handleChange}
+                        />
+                    </div>
+
+                    <div className="half-width">
+                        <label
+                            htmlFor="github"
+                            className="label"
+                        >
+                            GitHub
+                        </label>
+
+                        <input
+                            id="github"
+                            name="github"
+                            className="input"
+                            value={formData.github}
+                            onChange={handleChange}
+                        />
+                    </div>
+
+                    <div className="full-width">
+                        <h3 className="group-title">
+                            💼 Professional Details
+                        </h3>
+                    </div>
+
+                    <div className="full-width">
+                        <label
+                            htmlFor="summary"
+                            className="label"
+                        >
+                            Summary
+                        </label>
+
+                        <textarea
+                            id="summary"
+                            name="summary"
+                            className="textarea"
+                            value={formData.summary}
+                            onChange={handleChange}
+                        />
+                    </div>
+
+                    <div className="full-width">
+                        <label
+                            htmlFor="education"
+                            className="label"
+                        >
+                            Education
+                        </label>
+
+                        <textarea
+                            id="education"
+                            name="education"
+                            className="textarea"
+                            value={formData.education}
+                            onChange={handleChange}
+                        />
+                    </div>
+
+                    <div className="full-width">
+                        <label
+                            htmlFor="skills"
+                            className="label"
+                        >
+                            Skills
+                        </label>
+
+                        <input
+                            id="skills"
+                            name="skills"
+                            className="input"
+                            value={formData.skills}
+                            onChange={handleChange}
+                        />
+                    </div>
+
+                    <div className="full-width">
+                        <label
+                            htmlFor="experience"
+                            className="label"
+                        >
+                            Experience
+                        </label>
+
+                        <textarea
+                            id="experience"
+                            name="experience"
+                            rows="6"
+                            className="textarea"
+                            value={formData.experience}
+                            onChange={handleChange}
+                        />
+                    </div>
+
+                    <div className="full-width">
+                        <button
+                            type="submit"
+                            className="save-button"
+                        >
+                            Save Profile
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     );
 }
