@@ -5,6 +5,10 @@ import express, {
 } from 'express';
 import * as path from 'path';
 import { GoogleGenAI } from '@google/genai';
+import dotenv from 'dotenv';
+
+dotenv.config({ path: '.env.local' });
+console.log('GEMINI?', !!process.env.GEMINI_API_KEY);
 
 const app = express();
 

@@ -1,13 +1,7 @@
 packages:
   - 'apps/*'
-  - 'libs/api/products'
-  - 'libs/shared/*'
-  - 'libs/shop/*'
-  - 'ai'
-  - 'libs/*'
-  - '/apps/server-ai'
-  - '/apps/server-ai-e2e'
-  - '/apps/react-playground'
+  - 'apps/llmEnabled/*'
+  - 'libs/**'
 allowBuilds:
   '@google/genai': false
   '@parcel/watcher': false

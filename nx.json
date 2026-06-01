@@ -99,7 +99,7 @@
       "options": {
         "targetName": "test"
       },
-      "exclude": ["/apps/server-ai-e2e/**/*"]
+      "exclude": ["/apps/llmEnabled/server-ai-e2e/**/*"]
     }
   ],
   "targetDefaults": {

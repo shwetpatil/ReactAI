@@ -1,6 +1,6 @@
 import styles from './app.module.css';
 
-import { Route, Routes, Link, Form } from 'react-router-dom';
+import { Route, Routes, Link } from 'react-router-dom';
 import { CounterPage } from './pages/CounterPage';
 import HomePage from './pages/HomePage';
 import { StarRatingPage } from './pages/StarRatingPage';

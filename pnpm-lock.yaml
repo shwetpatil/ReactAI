@@ -14,6 +14,9 @@ importers:
       axios:
         specifier: ^1.6.0
         version: 1.16.1
+      dotenv:
+        specifier: ^17.4.2
+        version: 17.4.2
       express:
         specifier: ^4.21.2
         version: 4.22.2
@@ -236,7 +239,7 @@ importers:
 
   apps/react-playground-e2e: {}
 
-  apps/server-ai:
+  apps/llmEnabled/server-ai:
     dependencies:
       '@google/genai':
         specifier: ^2.6.0
@@ -245,7 +248,7 @@ importers:
         specifier: ^4.21.2
         version: 4.22.2
 
-  apps/server-ai-e2e: {}
+  apps/llmEnabled/server-ai-e2e: {}
 
   apps/shop:
     devDependencies:
@@ -267,13 +270,13 @@ importers:
 
   apps/shop-e2e: {}
 
-  apps/web-ai:
+  apps/llmEnabled/web-ai:
     dependencies:
       '@org/ai':
         specifier: workspace:*
         version: link:../../libs/ai
 
-  apps/web-ai-e2e: {}
+  apps/llmEnabled/web-ai-e2e: {}
 
   libs/ai:
     dependencies:
@@ -4479,6 +4482,10 @@ packages:
 
   dotenv@16.4.7:
     resolution: {integrity: sha512-47qPchRCykZC03FhkYAhrvwU4xDBFIj1QPqaarj6mdM/hgUzfPHcpkHJOn3mJAufFeeAxAzeGsr5X0M4k6fLZQ==}
+    engines: {node: '>=12'}
+
+  dotenv@17.4.2:
+    resolution: {integrity: sha512-nI4U3TottKAcAD9LLud4Cb7b2QztQMUEfHbvhTH09bqXTxnSie8WnjPALV/WMCrJZ6UV/qHJ6L03OqO3LcdYZw==}
     engines: {node: '>=12'}
 
   dunder-proto@1.0.1:
@@ -13388,6 +13395,8 @@ snapshots:
       dotenv: 16.4.7
 
   dotenv@16.4.7: {}
+
+  dotenv@17.4.2: {}
 
   dunder-proto@1.0.1:
     dependencies:

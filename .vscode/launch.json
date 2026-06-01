@@ -33,7 +33,7 @@
       "skipFiles": ["<node_internals>/**"],
       "sourceMaps": true,
       "outFiles": [
-        "${workspaceFolder}//apps/server-ai/dist/**/*.(m|c|)js",
+        "${workspaceFolder}//apps/llmEnabled/server-ai/dist/**/*.(m|c|)js",
         "!**/node_modules/**"
       ]
     }
