@@ -11,6 +11,9 @@ export function App() {
     <div className={styles.app}>
       <header>
         <h1>React Playground</h1>
+      </header>
+
+      <main>
         <nav>
           <ul>
             <li>
@@ -27,17 +30,16 @@ export function App() {
             </li>
           </ul>
         </nav>
-      </header>
 
-      <main>
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/counter" element={<CounterPage />} />
-          <Route path="/star-rating" element={<StarRatingPage />} />
-          <Route path="/todo" element={<TodoPage />} />
-        </Routes>
+        <div className={styles.content}>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/counter" element={<CounterPage />} />
+            <Route path="/star-rating" element={<StarRatingPage />} />
+            <Route path="/todo" element={<TodoPage />} />
+          </Routes>
+        </div>
       </main>
-
       <footer>
         <p>&copy; 2026 React Playground</p>
       </footer>

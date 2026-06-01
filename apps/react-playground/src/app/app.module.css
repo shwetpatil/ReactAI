@@ -23,14 +23,23 @@ header {
 ul {
     display: flex;
     gap: 0.625rem;      /* 10px */
+    flex-direction: column;
     list-style: none;
     padding: 0;
     margin: 0;
+    align-items: left;
+    padding: 0.5rem;
 }
 
 main {
+    display: flex;
     flex: 1;
-    padding: 1rem;
+    flex-direction: row;
+}
+
+nav {
+    width: 5rem;
+    background-color: antiquewhite;
 }
 
 footer {
