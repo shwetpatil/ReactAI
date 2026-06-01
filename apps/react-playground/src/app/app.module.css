@@ -17,6 +17,7 @@ header {
     gap: 0.625rem;      /* 10px */
     background-color: aliceblue;
     padding: 1rem;
+    height: 3rem;
 }
 
 ul {
@@ -35,4 +36,6 @@ main {
 footer {
     background-color: aliceblue;
     padding: 1rem;
+        height: 3rem;
+
 }
