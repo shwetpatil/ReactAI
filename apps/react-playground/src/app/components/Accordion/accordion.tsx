@@ -28,9 +28,7 @@ const data: { sections: Section[] } = {
 };
 
 export function Accordion() {
-  const [openSections, setOpenSections] = useState<
-    Record<string, boolean>
-  >({});
+  const [openSections, setOpenSections] = useState<Record<string, boolean>>({});
 
   const toggleSection = (id: string) => {
     setOpenSections((prev) => ({
@@ -45,21 +43,23 @@ export function Accordion() {
 
       {data.sections.map((item) => (
         <div key={item.id}>
-          <div className={styles.expander}>
+          <button
+            type="button"
+            className={styles.expander}
+            onClick={() => toggleSection(item.id)}
+            aria-expanded={!!openSections[item.id]}
+          >
             <h3>{item.title}</h3>
 
-            <button
-              type="button"
-              aria-expanded={!!openSections[item.id]}
-              aria-controls={`content-${item.id}`}
-              onClick={() => toggleSection(item.id)}
-            >
-              {openSections[item.id] ? '▼' : '▶'}
-            </button>
-          </div>
+            <span
+              className={`${styles['accordion-icon']} ${
+                openSections[item.id] ? styles['accordion-icon--rotated'] : ''
+              }`}
+            />
+          </button>
 
           {openSections[item.id] && (
-            <div id={`content-${item.id}`}>
+            <div>
               <p>{item.content}</p>
             </div>
           )}
