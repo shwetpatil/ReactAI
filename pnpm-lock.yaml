@@ -262,8 +262,6 @@ importers:
 
   apps/react-playground: {}
 
-  apps/react-playground-e2e: {}
-
   apps/shop:
     devDependencies:
       '@org/models':

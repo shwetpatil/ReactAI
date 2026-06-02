@@ -6,6 +6,7 @@ import HomePage from './pages/HomePage';
 import { StarRatingPage } from './pages/StarRatingPage';
 import { TodoPage } from './pages/TodoPage';
 import { FormPage } from './pages/FormPage';
+import { Accordion } from './Components/Accordion/accordion';
 
 export function App() {
   return (
@@ -32,6 +33,9 @@ export function App() {
             <li>
               <Link to="/form">Form</Link>
             </li>
+            <li>
+              <Link to="/accordion">Accordion</Link>
+            </li>
           </ul>
         </nav>
 
@@ -42,6 +46,7 @@ export function App() {
             <Route path="/star-rating" element={<StarRatingPage />} />
             <Route path="/todo" element={<TodoPage />} />
             <Route path="/form" element={<FormPage />} />
+            <Route path="/accordion" element={<Accordion />} />
           </Routes>
         </div>
       </main>

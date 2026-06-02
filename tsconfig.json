@@ -16,9 +16,6 @@
       "path": "./apps/react-playground"
     },
     {
-      "path": "./apps/react-playground-e2e"
-    },
-    {
       "path": "./libs/api/products"
     },
     {
