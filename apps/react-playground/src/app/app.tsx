@@ -11,7 +11,7 @@ import { FormPage } from './pages/FormPage';
 import { Accordion } from './Components/Accordion/accordion';
 import { TrafficLight } from './Components/TrafficLight/TrafficLight';
 import SearchWithTransition from './Components/ReactHooks/TransitionHook';
-import TicTacToe from './TicTacToe/TicTacToe';
+import TicTacToe from './Components/TicTacToe/TicTacToe';
 
 export function App() {
   return (
