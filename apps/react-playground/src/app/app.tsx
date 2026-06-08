@@ -10,6 +10,8 @@ import { FormPage } from './pages/FormPage';
 
 import { Accordion } from './Components/Accordion/accordion';
 import { TrafficLight } from './Components/TrafficLight/TrafficLight';
+import SearchWithTransition from './Components/ReactHooks/TransitionHook';
+import TicTacToe from './TicTacToe/TicTacToe';
 
 export function App() {
   return (
@@ -48,6 +50,13 @@ export function App() {
             <li>
               <Link to="/traffic-light">Traffic Light</Link>
             </li>
+
+            <li>
+              <Link to="/react-hooks-transition">React Hooks</Link>
+            </li>
+            <li>
+              <Link to="/tic-tac">Tic Tac Toe</Link>
+            </li>
           </ul>
         </nav>
 
@@ -60,9 +69,12 @@ export function App() {
             <Route path="/form" element={<FormPage />} />
             <Route path="/accordion" element={<Accordion />} />
             <Route
-              path="/traffic-light"
-              element={<TrafficLight />}
+              path="/react-hooks-transition"
+              element={<SearchWithTransition />}
             />
+            <Route path="/tic-tac" element={<TicTacToe />} />
+
+            <Route path="/traffic-light" element={<TrafficLight />} />
           </Routes>
         </div>
       </main>
