@@ -7,6 +7,7 @@ import { CounterPage } from './pages/CounterPage';
 import { StarRatingPage } from './pages/StarRatingPage';
 import { TodoPage } from './pages/TodoPage';
 import { FormPage } from './pages/FormPage';
+import APIFetch from './pages/ApiFetch';
 
 import { Accordion } from './Components/Accordion/accordion';
 import { TrafficLight } from './Components/TrafficLight/TrafficLight';
@@ -57,6 +58,9 @@ export function App() {
             <li>
               <Link to="/tic-tac">Tic Tac Toe</Link>
             </li>
+            <li>
+              <Link to="/api-fetch">API fetch</Link>
+            </li>
           </ul>
         </nav>
 
@@ -73,8 +77,8 @@ export function App() {
               element={<SearchWithTransition />}
             />
             <Route path="/tic-tac" element={<TicTacToe />} />
-
             <Route path="/traffic-light" element={<TrafficLight />} />
+            <Route path="/api-fetch" element={<APIFetch />} />
           </Routes>
         </div>
       </main>
