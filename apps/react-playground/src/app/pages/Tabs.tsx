@@ -21,14 +21,14 @@ CSS.`,
 ];
 
 export default function Tabs() {
-    const [count, setCount] = React.useState<number>(0)
+  const [count, setCount] = React.useState<number>(0);
 
   return (
     <div>
       <div>
         {tabsContent.map((item, index) => (
           <button
-          style={{"background":"#065d31"}}
+            style={{ background: '#065d31' }}
             key={item.title}
             onClick={() => setCount(index)}
           >
@@ -37,7 +37,7 @@ export default function Tabs() {
         ))}
       </div>
 
-      <div style={{"background":"#DDFFEE"}}>
+      <div style={{ background: '#DDFFEE' }}>
         <p>{tabsContent[count].content}</p>
       </div>
     </div>
