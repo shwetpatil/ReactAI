@@ -14,6 +14,7 @@ import { TrafficLight } from './Components/TrafficLight/TrafficLight';
 import SearchWithTransition from './Components/ReactHooks/TransitionHook';
 import TicTacToe from './Components/TicTacToe/TicTacToe';
 import Tabs from './pages/Tabs';
+import ImageCarousel from './pages/ImageCarousel';
 
 export function App() {
   return (
@@ -65,6 +66,10 @@ export function App() {
             <li>
               <Link to="/tabs">Tabs</Link>
             </li>
+                        <li>
+              <Link to="/ImageCarousel">ImageCarousel</Link>
+            </li>
+
           </ul>
         </nav>
 
@@ -77,7 +82,7 @@ export function App() {
             <Route path="/form" element={<FormPage />} />
             <Route path="/accordion" element={<Accordion />} />
             <Route path="tabs" element={<Tabs />} />
-
+            <Route path="ImageCarousel" element={<ImageCarousel />} />
             <Route
               path="/react-hooks-transition"
               element={<SearchWithTransition />}
