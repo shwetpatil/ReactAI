@@ -13,6 +13,7 @@ import { Accordion } from './Components/Accordion/accordion';
 import { TrafficLight } from './Components/TrafficLight/TrafficLight';
 import SearchWithTransition from './Components/ReactHooks/TransitionHook';
 import TicTacToe from './Components/TicTacToe/TicTacToe';
+import Tabs from './pages/Tabs';
 
 export function App() {
   return (
@@ -61,6 +62,9 @@ export function App() {
             <li>
               <Link to="/api-fetch">API fetch</Link>
             </li>
+            <li>
+              <Link to="/tabs">Tabs</Link>
+            </li>
           </ul>
         </nav>
 
@@ -72,6 +76,8 @@ export function App() {
             <Route path="/todo" element={<TodoPage />} />
             <Route path="/form" element={<FormPage />} />
             <Route path="/accordion" element={<Accordion />} />
+            <Route path="tabs" element={<Tabs />} />
+
             <Route
               path="/react-hooks-transition"
               element={<SearchWithTransition />}
