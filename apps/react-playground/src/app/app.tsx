@@ -15,6 +15,7 @@ import SearchWithTransition from './Components/ReactHooks/TransitionHook';
 import TicTacToe from './Components/TicTacToe/TicTacToe';
 import Tabs from './pages/Tabs';
 import ImageCarousel from './pages/ImageCarousel';
+import ProgressBar from './pages/ProgressBar';
 
 export function App() {
   return (
@@ -66,10 +67,12 @@ export function App() {
             <li>
               <Link to="/tabs">Tabs</Link>
             </li>
-                        <li>
+            <li>
               <Link to="/ImageCarousel">ImageCarousel</Link>
             </li>
-
+            <li>
+              <Link to="/progress-bar">Progress Bar</Link>
+            </li>
           </ul>
         </nav>
 
@@ -90,6 +93,7 @@ export function App() {
             <Route path="/tic-tac" element={<TicTacToe />} />
             <Route path="/traffic-light" element={<TrafficLight />} />
             <Route path="/api-fetch" element={<APIFetch />} />
+            <Route path="/progress-bar" element={<ProgressBar />} />
           </Routes>
         </div>
       </main>
