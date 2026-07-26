@@ -16,6 +16,7 @@ import TicTacToe from './Components/TicTacToe/TicTacToe';
 import Tabs from './pages/Tabs';
 import ImageCarousel from './pages/ImageCarousel';
 import ProgressBar from './pages/ProgressBar';
+import Modal from './pages/Modal';
 
 export function App() {
   return (
@@ -73,6 +74,9 @@ export function App() {
             <li>
               <Link to="/progress-bar">Progress Bar</Link>
             </li>
+            <li>
+              <Link to="/modal-dialog">Modal Dialog</Link>
+            </li>
           </ul>
         </nav>
 
@@ -94,6 +98,7 @@ export function App() {
             <Route path="/traffic-light" element={<TrafficLight />} />
             <Route path="/api-fetch" element={<APIFetch />} />
             <Route path="/progress-bar" element={<ProgressBar />} />
+            <Route path="/modal-dialog" element={<Modal />} />
           </Routes>
         </div>
       </main>
