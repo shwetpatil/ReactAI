@@ -8,12 +8,14 @@
   "private": true,
   "dependencies": {
     "@google/genai": "^2.6.0",
+    "@reduxjs/toolkit": "^2.12.0",
     "axios": "^1.6.0",
     "dotenv": "^17.4.2",
     "express": "^4.21.2",
     "multer": "^2.1.1",
     "react": "19.0.0",
     "react-dom": "19.0.0",
+    "react-redux": "^9.3.0",
     "react-router-dom": "6.30.3"
   },
   "devDependencies": {
