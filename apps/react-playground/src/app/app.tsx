@@ -17,6 +17,7 @@ import Tabs from './pages/Tabs';
 import ImageCarousel from './pages/ImageCarousel';
 import ProgressBar from './pages/ProgressBar';
 import Modal from './pages/Modal';
+import { Table } from './pages/Table';
 
 export function App() {
   return (
@@ -31,7 +32,9 @@ export function App() {
             <li>
               <Link to="/">Home</Link>
             </li>
-
+            <li>
+              <Link to="/table">Table</Link>
+            </li>
             <li>
               <Link to="/counter">Counter</Link>
             </li>
@@ -83,6 +86,8 @@ export function App() {
         <div className={styles.content}>
           <Routes>
             <Route path="/" element={<HomePage />} />
+            <Route path="/table" element={<Table />} />
+
             <Route path="/counter" element={<CounterPage />} />
             <Route path="/star-rating" element={<StarRatingPage />} />
             <Route path="/todo" element={<TodoPage />} />
