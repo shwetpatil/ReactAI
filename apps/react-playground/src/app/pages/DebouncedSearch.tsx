@@ -7,43 +7,46 @@ type Product = {
 
 export default function DebouncedSearch() {
   const [input, setInput] = React.useState("");
-  const [query, setQuery] = React.useState("");
   const [data, setData] = React.useState<Product[]>([]);
+  const [isLoading, setIsLoading] = React.useState(false);
 
-  // Debounce the search query
   React.useEffect(() => {
-    const timer = setTimeout(() => {
-      setQuery(input);
-    }, 500);
-
-    return () => clearTimeout(timer);
-  }, [input]);
-
-  // Fetch products whenever the debounced query changes
-  React.useEffect(() => {
-    if (!query.trim()) {
+    const trimmedInput = input.trim();
+    if (!trimmedInput) {
       setData([]);
       return;
     }
 
-    const searchProducts = async () => {
+    const controller = new AbortController();
+
+    const timer = setTimeout(async () => {
+      setIsLoading(true);
       try {
         const response = await fetch(
-          `https://dummyjson.com/products/search?q=${query}`
+          `https://dummyjson.com/products/search?q=${encodeURIComponent(trimmedInput)}`,
+          { signal: controller.signal }
         );
-
         const result = await response.json();
-        setData(result.products);
-      } catch (error) {
-        console.error("Error fetching products:", error);
+        setData(result.products ?? []);
+      } catch (error: any) {
+        if (error.name !== "AbortError") {
+          console.error("Error fetching products:", error);
+        }
+      } finally {
+        setIsLoading(false);
       }
-    };
+    }, 500);
 
-    searchProducts();
-  }, [query]);
+    // Clears the timer IF the user types again within 500ms
+    // ALSO cancels any active fetch request if input changes mid-flight
+    return () => {
+      clearTimeout(timer);
+      controller.abort();
+    };
+  }, [input]);
 
   return (
-    <div>
+    <div style={{ padding: "16px" }}>
       <input
         type="text"
         placeholder="Search products..."
@@ -51,9 +54,13 @@ export default function DebouncedSearch() {
         onChange={(e) => setInput(e.target.value)}
       />
 
-      {data.map((product) => (
-        <p key={product.id}>{product.title}</p>
-      ))}
+      {isLoading && <p>Loading...</p>}
+
+      <div>
+        {data.map((product) => (
+          <p key={product.id}>{product.title}</p>
+        ))}
+      </div>
     </div>
   );
 }

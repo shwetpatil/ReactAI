@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Todo } from '../Components/ToDo/Todo';
+import { Todo } from '../components/ToDo/Todo';
 
 export function TodoPage() {
   const [todos, setTodos] = useState<string[]>([]);
