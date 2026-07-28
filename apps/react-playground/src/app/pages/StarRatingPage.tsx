@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { StarRating } from '../Components/StartRating/StarRating';
+import { StarRating } from '../components/StartRating/StarRating';
 
 export function StarRatingPage() {
   const [count, setStarCount] = useState(0);

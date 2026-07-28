@@ -12,7 +12,7 @@ import APIFetch from './pages/ApiFetch';
 import { Accordion } from './Components/Accordion/accordion';
 import { TrafficLight } from './Components/TrafficLight/TrafficLight';
 import SearchWithTransition from './Components/ReactHooks/TransitionHook';
-import TicTacToe from './Components/TicTacToe/TicTacToe';
+import TicTacToe from './components/TicTacToe/TicTacToe';
 import Tabs from './pages/Tabs';
 import ImageCarousel from './pages/ImageCarousel';
 import ProgressBar from './pages/ProgressBar';

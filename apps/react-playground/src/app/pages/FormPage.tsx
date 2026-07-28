@@ -18,7 +18,7 @@ If all the form fields are correctly filled in, you will see an alert containing
 Notes
 You do not need JavaScript for this question; the focus is on HTML form validation and submission.*/
 
-import { Form } from "../Components/Form/Form";
+import { Form } from "../components/Form/Form";
 
 export function FormPage() {
   return (
