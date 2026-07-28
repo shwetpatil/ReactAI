@@ -18,6 +18,7 @@ import ImageCarousel from './pages/ImageCarousel';
 import ProgressBar from './pages/ProgressBar';
 import Modal from './pages/Modal';
 import { Table } from './pages/Table';
+import DebouncedSearch from './pages/DebouncedSearch';
 
 export function App() {
   return (
@@ -29,6 +30,10 @@ export function App() {
       <main>
         <nav>
           <ul>
+                        <li>
+              <Link to="/debounced-search">Debounced Search</Link>
+            </li>
+
             <li>
               <Link to="/">Home</Link>
             </li>
@@ -85,6 +90,8 @@ export function App() {
 
         <div className={styles.content}>
           <Routes>
+            <Route path="debounced-search" element={<DebouncedSearch />} />
+
             <Route path="/" element={<HomePage />} />
             <Route path="/table" element={<Table />} />
 
