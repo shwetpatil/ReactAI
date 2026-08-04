@@ -1,44 +1,68 @@
 import React from "react";
 
-type Product = {
+interface Product {
   id: number;
   title: string;
-};
+}
 
 export default function DebouncedSearch() {
-  const [input, setInput] = React.useState("");
+  const [input, setInput] = React.useState<string>("");
   const [data, setData] = React.useState<Product[]>([]);
-  const [isLoading, setIsLoading] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState<boolean>(false);
+  const [error, setError] = React.useState<string | null>(null);
 
   React.useEffect(() => {
     const trimmedInput = input.trim();
+
+    // 1. Don't search for empty input
     if (!trimmedInput) {
       setData([]);
+      setError(null);
+      setIsLoading(false);
       return;
     }
 
     const controller = new AbortController();
+    const { signal } = controller;
 
+    // 2. Debounce API call
     const timer = setTimeout(async () => {
       setIsLoading(true);
+      setError(null);
+
       try {
         const response = await fetch(
-          `https://dummyjson.com/products/search?q=${encodeURIComponent(trimmedInput)}`,
-          { signal: controller.signal }
+          `https://dummyjson.com/products/search?q=${encodeURIComponent(
+            trimmedInput
+          )}`,
+          { signal }
         );
+
+        // Check HTTP status
+        if (!response.ok) {
+          throw new Error("Failed to fetch products");
+        }
+
         const result = await response.json();
+
         setData(result.products ?? []);
-      } catch (error: any) {
-        if (error.name !== "AbortError") {
-          console.error("Error fetching products:", error);
+      } catch (err: unknown) {
+        // Ignore aborted requests
+        if (err instanceof Error && err.name !== "AbortError") {
+          console.error(err);
+          setError(err.message);
         }
       } finally {
-        setIsLoading(false);
+        // Avoid updating state if request was aborted
+        if (!signal.aborted) {
+          setIsLoading(false);
+        }
       }
     }, 500);
 
-    // Clears the timer IF the user types again within 500ms
-    // ALSO cancels any active fetch request if input changes mid-flight
+    // 3. Cleanup:
+    // - Cancel debounce timer
+    // - Abort any in-flight request
     return () => {
       clearTimeout(timer);
       controller.abort();
@@ -55,6 +79,12 @@ export default function DebouncedSearch() {
       />
 
       {isLoading && <p>Loading...</p>}
+
+      {error && (
+        <p style={{ color: "red" }}>
+          {error}
+        </p>
+      )}
 
       <div>
         {data.map((product) => (
